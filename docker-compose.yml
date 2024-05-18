@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+  jqplay:
+    build: .
+    depends_on:
+      - db
+    restart: always
+    ports:
+      - "8080:8080"
+    develop:
+      watch: &watch
+        - action: rebuild
+          path: .
+          ignore:
+            - .git
+            - .github
+            - build
+            - node_modules
