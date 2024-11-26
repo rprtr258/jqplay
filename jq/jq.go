@@ -11,14 +11,6 @@ import (
 	"strings"
 )
 
-type ValidationError struct {
-	s string
-}
-
-func (e *ValidationError) Error() string {
-	return e.s
-}
-
 var (
 	ErrExecTimeout   = errors.New("jq execution was timeout")
 	ErrExecCancelled = errors.New("jq execution was cancelled")
@@ -81,7 +73,7 @@ func (j *JQ) Validate() error {
 		}
 	}
 	if len(errMsgs) > 0 {
-		return &ValidationError{fmt.Sprintf("invalid input: %s", strings.Join(errMsgs, ", "))}
+		return fmt.Errorf("invalid input: %s", strings.Join(errMsgs, ", "))
 	}
 
 	return nil
@@ -89,6 +81,10 @@ func (j *JQ) Validate() error {
 
 func (j JQ) String() string {
 	return fmt.Sprintf("j=%s, q=%s, o=%v", j.Input, j.Query, j.Opts())
+}
+
+type JQExec struct {
+	LimitResourcesFunc func(*os.Process) error
 }
 
 func NewJQExec() *JQExec {
@@ -99,10 +95,6 @@ func NewJQExec() *JQExec {
 			return limitResources(p, limitMemory, limitCPUTime)
 		},
 	}
-}
-
-type JQExec struct {
-	LimitResourcesFunc func(*os.Process) error
 }
 
 func (e *JQExec) Eval(ctx context.Context, jq JQ, w io.Writer) error {

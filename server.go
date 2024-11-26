@@ -25,6 +25,11 @@ var tmpl = template.Must(template.
 	Parse(index))
 
 func newHTTPServer(cfg *Config) (*http.Server, error) {
+	h := &JQHandler{
+		JQExec: jq.NewJQExec(),
+		Config: cfg,
+	}
+
 	router := gin.New()
 	router.Use(
 		middleware.Timeout(5*time.Second),
@@ -34,9 +39,6 @@ func newHTTPServer(cfg *Config) (*http.Server, error) {
 		gin.Recovery(),
 	)
 	router.SetHTMLTemplate(tmpl)
-
-	h := &JQHandler{JQExec: jq.NewJQExec(), Config: cfg}
-
 	router.StaticFS("/assets", http.FS(PublicFS))
 	router.GET("/", h.handleIndex)
 	router.GET("/jq", h.handleJqGet)
