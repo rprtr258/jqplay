@@ -1,8 +1,6 @@
 module github.com/owenthereal/jqplay
 
-go 1.21.0
-
-toolchain go1.22.2
+go 1.23.0
 
 require (
 	github.com/gin-gonic/gin v1.10.0
@@ -10,7 +8,7 @@ require (
 	github.com/joeshaw/envdecode v0.0.0-20200121155833-099f1fc765bd
 	github.com/oklog/run v1.1.1-0.20240127200640-eee6e044b77c
 	github.com/rs/zerolog v1.33.0
-	github.com/stretchr/testify v1.9.0
+	github.com/stretchr/testify v1.10.0
 	github.com/unrolled/secure v1.16.0
 )
 
