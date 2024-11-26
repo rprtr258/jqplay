@@ -34,8 +34,8 @@ func newHTTPServer(cfg *Config) (*http.Server, error) {
 	router.Use(
 		middleware.Timeout(5*time.Second),
 		middleware.Secure(cfg.IsProd()),
-		middleware.RequestID(),
-		middleware.Logger(),
+		middleware.RequestID,
+		middleware.Logger,
 		gin.Recovery(),
 	)
 	router.SetHTMLTemplate(tmpl)
