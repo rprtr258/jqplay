@@ -9,7 +9,7 @@ require (
 	github.com/oklog/run v1.1.1-0.20240127200640-eee6e044b77c
 	github.com/rs/zerolog v1.33.0
 	github.com/stretchr/testify v1.10.0
-	github.com/unrolled/secure v1.16.0
+	github.com/unrolled/secure v1.17.0
 )
 
 require (
