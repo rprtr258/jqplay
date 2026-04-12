@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@bower_components/ace-builds@ajaxorg/ace-builds#^1":
-  version "1.37.1"
-  uid da6219a75f73d63e2298c9b4c293793faf98e6d9
-  resolved "https://codeload.github.com/ajaxorg/ace-builds/tar.gz/da6219a75f73d63e2298c9b4c293793faf98e6d9"
+"@bower_components/ace-builds@ajaxorg/ace-builds#^1.43.6":
+  version "1.43.6"
+  uid "586f6cf1d6ebf3e8f7292623de62471288a99b6c"
+  resolved "https://codeload.github.com/ajaxorg/ace-builds/tar.gz/586f6cf1d6ebf3e8f7292623de62471288a99b6c"
 
 "@bower_components/angular-ui-ace@angular-ui/ui-ace#0.2.3":
   version "0.0.0"
