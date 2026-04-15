@@ -8,7 +8,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/oklog/run"
 	"github.com/rs/zerolog/log"
 
@@ -24,32 +23,41 @@ var tmpl = template.Must(template.
 	Delims("#{", "}").
 	Parse(index))
 
+func renderTemplate(w http.ResponseWriter, data any) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if err := tmpl.Execute(w, data); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
 func newHTTPServer(cfg *Config) (*http.Server, error) {
 	h := &JQHandler{
 		JQExec: jq.NewJQExec(),
 		Config: cfg,
 	}
 
-	router := gin.New()
-	router.Use(
-		middleware.Timeout(5*time.Second),
-		middleware.Secure(cfg.IsProd()),
-		middleware.RequestID,
-		middleware.Logger,
-		gin.Recovery(),
-	)
-	router.SetHTMLTemplate(tmpl)
-	router.StaticFS("/assets", http.FS(PublicFS))
-	router.GET("/", h.handleIndex)
-	router.GET("/jq", h.handleJqGet)
-	router.POST("/jq", h.handleJqPost)
-	router.GET("/ping", func(c *gin.Context) {
-		c.String(http.StatusOK, "pong")
+	mux := http.NewServeMux()
+	mux.HandleFunc("GET /", h.handleIndex)
+	mux.HandleFunc("GET /jq", h.handleJqGet)
+	mux.HandleFunc("POST /jq", h.handleJqPost)
+	mux.HandleFunc("GET /ping", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("pong"))
 	})
+
+	// Serve assets from embedded FS
+	assetsFS, _ := http.FS(PublicFS).Open("/public")
+	if assetsFS != nil {
+		assetsFS.Close()
+	}
+	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.FS(PublicFS))))
+
+	// Chain middleware
+	handler := middleware.Timeout(5 * time.Second)(middleware.Secure(cfg.IsProd())(middleware.Logger(mux)))
 
 	return &http.Server{
 		Addr:    ":" + cfg.Port,
-		Handler: router,
+		Handler: handler,
 	}, nil
 }
 

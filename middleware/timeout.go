@@ -2,21 +2,18 @@ package middleware
 
 import (
 	"context"
+	"net/http"
 	"time"
-
-	"github.com/gin-gonic/gin"
 )
 
-func Timeout(d time.Duration) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		ctx, cancel := context.WithTimeout(c.Request.Context(), d)
-		c.Request = c.Request.WithContext(ctx)
+func Timeout(d time.Duration) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ctx, cancel := context.WithTimeout(r.Context(), d)
+			defer cancel()
 
-		go func() {
-			<-ctx.Done()
-			cancel()
-		}()
-
-		c.Next()
+			r = r.WithContext(ctx)
+			next.ServeHTTP(w, r)
+		})
 	}
 }

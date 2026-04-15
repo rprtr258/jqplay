@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/gin-gonic/gin"
 	"github.com/unrolled/secure"
 )
 
@@ -12,7 +11,7 @@ const (
 	allowOriginHeader = "Access-Control-Allow-Origin"
 )
 
-func Secure(isProd bool) gin.HandlerFunc {
+func Secure(isProd bool) func(http.Handler) http.Handler {
 	secureMiddleware := secure.New(secure.Options{
 		SSLRedirect:          true,
 		STSSeconds:           315360000,
@@ -24,23 +23,25 @@ func Secure(isProd bool) gin.HandlerFunc {
 		IsDevelopment:        !isProd,
 	})
 
-	return func(c *gin.Context) {
-		if shouldAllowOrigin(c.Request) {
-			c.Writer.Header().Add(allowOriginHeader, "*")
-		}
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if shouldAllowOrigin(r) {
+				w.Header().Add(allowOriginHeader, "*")
+			}
 
-		err := secureMiddleware.Process(c.Writer, c.Request)
-		if err != nil {
-			return
-		}
+			err := secureMiddleware.Process(w, r)
+			if err != nil {
+				return
+			}
 
-		c.Next()
+			next.ServeHTTP(w, r)
+		})
 	}
 }
 
 func shouldAllowOrigin(req *http.Request) bool {
 	extension := filepath.Ext(req.URL.Path)
-	if len(extension) < 4 { // fast path
+	if len(extension) < 4 {
 		return false
 	}
 

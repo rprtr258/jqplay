@@ -63,7 +63,6 @@ func TestJQValidate(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		c := c
 		t.Run(fmt.Sprintf("j=%q q=%q o=%v", c.J, c.Q, c.O), func(t *testing.T) {
 			t.Parallel()
 
@@ -91,8 +90,8 @@ func TestJQEvalTimeout(t *testing.T) {
 		Input: `{"dependencies":{"capnp":{"version":"0.1.4","dependencies":{"es6-promise":{"version":"1.0.0","dependencies":{"es6-promise":{"version":"1.0.0"}}}}}}}`,
 		Query: `.dependencies | recurse(to_entries | map(.values.dependencies))`,
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
-	err := newNoLimitJQExec().Eval(ctx, jq, io.Discard)
+	ctx, cancel := context.WithTimeout(t.Context(), 1*time.Second)
+	err := newNoLimitJQExec().Eval(ctx, jq, os.Stderr)
 	cancel()
 	assert.ErrorIs(t, err, ErrExecTimeout)
 }
@@ -102,7 +101,7 @@ func TestJQEvalCancelled(t *testing.T) {
 		Input: `{"dependencies":{"capnp":{"version":"0.1.4","dependencies":{"es6-promise":{"version":"1.0.0","dependencies":{"es6-promise":{"version":"1.0.0"}}}}}}}`,
 		Query: `.dependencies | recurse(to_entries | map(.values.dependencies))`,
 	}
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	go func() {
 		time.Sleep(3 * time.Second)
 		cancel()
@@ -116,26 +115,23 @@ func TestJQEvalAborted(t *testing.T) {
 		Input: `{"dependencies":{"capnp":{"version":"0.1.4","dependencies":{"es6-promise":{"version":"1.0.0","dependencies":{"es6-promise":{"version":"1.0.0"}}}}}}}`,
 		Query: `.dependencies | recurse(to_entries | map(.values.dependencies))`,
 	}
-	err := newLimitJQExec().Eval(context.Background(), jq, io.Discard)
+	err := newLimitJQExec().Eval(t.Context(), jq, io.Discard)
 	assert.ErrorIs(t, err, ErrExecAborted)
 }
 
 func TestJQEvalRaceCondition(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	ctx, cancel := context.WithTimeout(t.Context(), 3*time.Second)
 	defer cancel()
 
 	var wg sync.WaitGroup
-	for i := 0; i < 100; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-
+	for range 100 {
+		wg.Go(func() {
 			jq := JQ{
 				Input: `{ "foo": { "bar": { "baz": 123 } } }`,
 				Query: ".",
 			}
 			assert.NoError(t, newNoLimitJQExec().Eval(ctx, jq, io.Discard))
-		}()
+		})
 	}
 	wg.Wait()
 }

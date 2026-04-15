@@ -110,6 +110,7 @@ func (e *JQExec) Eval(ctx context.Context, jq JQ, w io.Writer) error {
 	cmd.Env = make([]string, 0)
 	cmd.Stdout = w
 	cmd.Stderr = w
+	fmt.Println(Path, append(jq.Opts(), jq.Query))
 	if err := cmd.Start(); err != nil {
 		return err
 	}

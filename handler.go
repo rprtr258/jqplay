@@ -5,11 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log/slog"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
 	"github.com/owenthereal/jqplay/jq"
+	"github.com/owenthereal/jqplay/middleware"
 )
 
 type JQHandlerContext struct {
@@ -30,50 +29,43 @@ type JQHandler struct {
 	Config *Config
 }
 
-func (h *JQHandler) handleIndex(c *gin.Context) {
-	c.HTML(200, "index.tmpl", &JQHandlerContext{Config: h.Config})
+func (h *JQHandler) handleIndex(w http.ResponseWriter, r *http.Request) {
+	renderTemplate(w, &JQHandlerContext{Config: h.Config})
 }
 
-func (h *JQHandler) handleJqPost(c *gin.Context) {
+func (h *JQHandler) handleJqPost(w http.ResponseWriter, r *http.Request) {
 	var j jq.JQ
-	if err := c.BindJSON(&j); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&j); err != nil {
 		err = fmt.Errorf("error parsing JSON: %s", err)
-		c.String(http.StatusUnprocessableEntity, err.Error())
+		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 		return
 	}
 
-	c.Header("Content-Type", "text/plain; charset=utf-8")
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 
-	// Evaling into ResponseWriter sets the status code to 200
-	// appending error message in the end if there's any
 	out := bytes.NewBuffer(nil)
-	if err := h.JQExec.Eval(c.Request.Context(), j, io.MultiWriter(c.Writer, out)); err != nil {
+	mw := io.MultiWriter(w, out)
+	if err := h.JQExec.Eval(r.Context(), j, mw); err != nil {
 		if err == jq.ErrExecAborted || err == jq.ErrExecTimeout {
-			h.logger(c).Error("jq error", "error", err, "out", out.String(), "in", j)
+			middleware.GetLogger(r).Error("jq error", "error", err, "out", out.String(), "in", j)
 		}
-
-		fmt.Fprint(c.Writer, err.Error()) //nolint:errcheck
+		fmt.Fprint(w, err.Error())
 	}
 }
 
-func (h *JQHandler) handleJqGet(c *gin.Context) {
-	jq := &jq.JQ{
-		Input: c.Query("j"),
-		Query: c.Query("q"),
+func (h *JQHandler) handleJqGet(w http.ResponseWriter, r *http.Request) {
+	jqObj := &jq.JQ{
+		Input: r.URL.Query().Get("j"),
+		Query: r.URL.Query().Get("q"),
 	}
 
 	var jqData string
-	if err := jq.Validate(); err == nil {
-		d, err := json.Marshal(jq)
+	if err := jqObj.Validate(); err == nil {
+		d, err := json.Marshal(jqObj)
 		if err == nil {
 			jqData = string(d)
 		}
 	}
 
-	c.HTML(http.StatusOK, "index.tmpl", &JQHandlerContext{Config: h.Config, JQ: jqData})
-}
-
-func (h *JQHandler) logger(c *gin.Context) *slog.Logger {
-	l, _ := c.Get("logger")
-	return l.(*slog.Logger)
+	renderTemplate(w, &JQHandlerContext{Config: h.Config, JQ: jqData})
 }

@@ -1,28 +1,60 @@
 package middleware
 
 import (
+	"context"
+	"log/slog"
+	"net/http"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 )
 
-func Logger(c *gin.Context) {
-	logger := log.Logger.With().Str("request_id", c.Query("request_id")).Logger()
-	c.Set("logger", logger)
+type loggerKey struct{}
 
-	start := time.Now()
-	c.Next()
-	latency := time.Since(start)
+func Logger(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		sl := slog.New(slog.NewTextHandler(log.Logger, nil))
 
-	method := c.Request.Method
-	path := c.Request.URL.Path
-	logger.Info().
-		Str("method", method).
-		Str("path", path).
-		Int("status", c.Writer.Status()).
-		Str("client_ip", c.ClientIP()).
-		Dur("latency", latency).
-		Int("bytes", c.Writer.Size()).
-		Send()
+		ctx := context.WithValue(r.Context(), loggerKey{}, sl)
+		r = r.WithContext(ctx)
+
+		start := time.Now()
+		rw := &responseWriter{ResponseWriter: w}
+		next.ServeHTTP(rw, r)
+		latency := time.Since(start)
+
+		log.Info().
+			Str("method", r.Method).
+			Str("path", r.URL.Path).
+			Int("status", rw.status).
+			Str("client_ip", r.RemoteAddr).
+			Dur("latency", latency).
+			Int("bytes", rw.size).
+			Send()
+	})
+}
+
+type responseWriter struct {
+	http.ResponseWriter
+	status int
+	size   int
+}
+
+func (rw *responseWriter) WriteHeader(status int) {
+	rw.status = status
+	rw.ResponseWriter.WriteHeader(status)
+}
+
+func (rw *responseWriter) Write(b []byte) (int, error) {
+	n, err := rw.ResponseWriter.Write(b)
+	rw.size += n
+	if rw.status == 0 {
+		rw.status = http.StatusOK
+	}
+	return n, err
+}
+
+func GetLogger(r *http.Request) *slog.Logger {
+	l, _ := r.Context().Value(loggerKey{}).(*slog.Logger)
+	return l
 }

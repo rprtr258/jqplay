@@ -9,13 +9,13 @@ import (
 type Config struct {
 	Host      string `env:"HOST,default=0.0.0.0"`
 	Port      string `env:"PORT,default=8080"`
-	GinMode   string `env:"GIN_MODE,default=debug"`
+	Env       string `env:"ENV,default=development"`
 	AssetHost string `env:"ASSET_HOST"`
 	JQVer     string
 }
 
 func (c *Config) IsProd() bool {
-	return c.GinMode == "release"
+	return c.Env == "production"
 }
 
 func Load() (*Config, error) {
