@@ -38,6 +38,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          check-latest: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: yarn
       - name: Run vet
         run: make vet
   docker_push:
@@ -78,5 +86,5 @@ jobs:
     name: Deploy
     if: github.ref == 'refs/heads/master'
     needs: [build, docker_build, test, vet]
-    uses: owenthereal/jqplay/.github/workflows/deploy.yml@master
+    uses: ./.github/workflows/deploy.yml
     secrets: inherit

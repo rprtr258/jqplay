@@ -52,7 +52,7 @@ func (h *JQHandler) handleJqPost(c *gin.Context) {
 			h.logger(c).Error("jq error", "error", err, "out", out.String(), "in", j)
 		}
 
-		fmt.Fprint(c.Writer, err.Error())
+		fmt.Fprint(c.Writer, err.Error()) //nolint:errcheck
 	}
 }
 

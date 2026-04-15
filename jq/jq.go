@@ -125,8 +125,7 @@ func (e *JQExec) Eval(ctx context.Context, jq JQ, w io.Writer) error {
 			return ErrExecCancelled
 		}
 
-		if strings.Contains(err.Error(), "signal: segmentation fault") ||
-			strings.Contains(err.Error(), "signal: aborted") {
+		if errStr := err.Error(); strings.Contains(errStr, "signal:") || strings.Contains(errStr, "killed") {
 			return ErrExecAborted
 		}
 

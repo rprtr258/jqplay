@@ -17,13 +17,13 @@ func copyJqBin(dstDir string) error {
 	if err != nil {
 		return fmt.Errorf("cannot open file %w", err)
 	}
-	defer in.Close()
+	defer func() { _ = in.Close() }()
 
 	out, err := os.OpenFile(filepath.Join(dstDir, "jq"), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o755)
 	if err != nil {
 		return fmt.Errorf("cannot create dst file %w", err)
 	}
-	defer out.Close()
+	defer func() { _ = out.Close() }()
 
 	if _, err = io.Copy(out, in); err != nil {
 		return fmt.Errorf("cannot copy file %w", err)

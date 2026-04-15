@@ -1,7 +1,7 @@
 GOBIN ?= $(CURDIR)/build
 .PHONY: build
 build:
-	docker run -ti -v .:/data node sh -c 'cd data && yarn && rm -rf node_modules'
+	docker run -i --rm -v .:/data node sh -c 'cd data && yarn && rm -rf node_modules'
 	go build .
 
 .PHONY: test
