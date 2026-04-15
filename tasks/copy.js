@@ -3,7 +3,7 @@ module.exports = function(grunt) {
   grunt.config('copy', {
     fonts: {
       files: [
-        {expand: true, flatten: true, src: 'node_modules/@bower_components/bootstrap/dist/fonts/*.*', dest: 'public/fonts/'}
+        {expand: true, flatten: true, src: 'node_modules/bootstrap/dist/fonts/*.*', dest: 'public/fonts/'}
       ]
     },
     images: {
