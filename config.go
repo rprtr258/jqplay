@@ -1,16 +1,17 @@
 package main
 
 import (
-	"github.com/joeshaw/envdecode"
+	"cmp"
+	"os"
 
-	"github.com/owenthereal/jqplay/jq"
+	"github.com/rprtr258/jqplay/jq"
 )
 
 type Config struct {
-	Host      string `env:"HOST,default=0.0.0.0"`
-	Port      string `env:"PORT,default=8080"`
-	Env       string `env:"ENV,default=development"`
-	AssetHost string `env:"ASSET_HOST"`
+	Host      string
+	Port      string
+	Env       string
+	AssetHost string
 	JQVer     string
 }
 
@@ -18,14 +19,12 @@ func (c *Config) IsProd() bool {
 	return c.Env == "production"
 }
 
-func Load() (*Config, error) {
-	conf := &Config{}
-	err := envdecode.Decode(conf)
-	if err != nil {
-		return nil, err
+func Load() Config {
+	return Config{
+		Host:      cmp.Or(os.Getenv("HOST"), "0.0.0.0"),
+		Port:      cmp.Or(os.Getenv("PORT"), "8080"),
+		Env:       cmp.Or(os.Getenv("ENV"), "development"),
+		AssetHost: os.Getenv("ASSET_HOST"),
+		JQVer:     jq.Version,
 	}
-
-	conf.JQVer = jq.Version
-
-	return conf, nil
 }

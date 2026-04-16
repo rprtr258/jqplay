@@ -7,12 +7,12 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/owenthereal/jqplay/jq"
-	"github.com/owenthereal/jqplay/middleware"
+	"github.com/rprtr258/jqplay/jq"
+	"github.com/rprtr258/jqplay/middleware"
 )
 
 type JQHandlerContext struct {
-	*Config
+	Config
 	JQ string
 }
 
@@ -26,7 +26,7 @@ func (c *JQHandlerContext) ShouldInitJQ() bool {
 
 type JQHandler struct {
 	JQExec *jq.JQExec
-	Config *Config
+	Config Config
 }
 
 func (h *JQHandler) handleIndex(w http.ResponseWriter, r *http.Request) {
@@ -49,7 +49,7 @@ func (h *JQHandler) handleJqPost(w http.ResponseWriter, r *http.Request) {
 		if err == jq.ErrExecAborted || err == jq.ErrExecTimeout {
 			middleware.GetLogger(r).Error("jq error", "error", err, "out", out.String(), "in", j)
 		}
-		fmt.Fprint(w, err.Error())
+		fmt.Fprint(w, err.Error()) //nolint:errcheck
 	}
 }
 

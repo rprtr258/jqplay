@@ -11,8 +11,8 @@ import (
 	"github.com/oklog/run"
 	"github.com/rs/zerolog/log"
 
-	"github.com/owenthereal/jqplay/jq"
-	"github.com/owenthereal/jqplay/middleware"
+	"github.com/rprtr258/jqplay/jq"
+	"github.com/rprtr258/jqplay/middleware"
 )
 
 //go:embed public/index.tmpl
@@ -30,7 +30,7 @@ func renderTemplate(w http.ResponseWriter, data any) {
 	}
 }
 
-func newHTTPServer(cfg *Config) (*http.Server, error) {
+func newHTTPServer(cfg Config) (*http.Server, error) {
 	h := &JQHandler{
 		JQExec: jq.NewJQExec(),
 		Config: cfg,
@@ -42,13 +42,13 @@ func newHTTPServer(cfg *Config) (*http.Server, error) {
 	mux.HandleFunc("POST /jq", h.handleJqPost)
 	mux.HandleFunc("GET /ping", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("pong"))
+		w.Write([]byte("pong")) //nolint:errcheck
 	})
 
 	// Serve assets from embedded FS
 	assetsFS, _ := http.FS(PublicFS).Open("/public")
 	if assetsFS != nil {
-		assetsFS.Close()
+		assetsFS.Close() //nolint:errcheck
 	}
 	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.FS(PublicFS))))
 
@@ -61,7 +61,7 @@ func newHTTPServer(cfg *Config) (*http.Server, error) {
 	}, nil
 }
 
-func newServer(ctx context.Context, c *Config) error {
+func newServer(ctx context.Context, c Config) error {
 	srv, err := newHTTPServer(c)
 	if err != nil {
 		return err

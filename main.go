@@ -8,7 +8,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 
-	"github.com/owenthereal/jqplay/jq"
+	"github.com/rprtr258/jqplay/jq"
 )
 
 //go:embed all:public
@@ -17,10 +17,7 @@ var PublicFS embed.FS
 func main() {
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 
-	conf, err := Load()
-	if err != nil {
-		log.Fatal().Err(err).Msg("error loading config")
-	}
+	conf := Load()
 
 	log.Info().
 		Str("version", jq.Version).

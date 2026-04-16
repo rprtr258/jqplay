@@ -4,12 +4,12 @@
   "description": "jqplay",
   "repository": {
     "type": "git",
-    "url": "https://github.com/owenthereal/jqplay"
+    "url": "https://github.com/rprtr258/jqplay"
   },
   "author": "Owen Ou",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/owenthereal/jqplay/issues"
+    "url": "https://github.com/rprtr258/jqplay/issues"
   },
   "homepage": "https://jqplay.org",
   "dependencies": {

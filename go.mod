@@ -1,10 +1,8 @@
-module github.com/owenthereal/jqplay
+module github.com/rprtr258/jqplay
 
 go 1.26.0
 
 require (
-	github.com/google/uuid v1.6.0
-	github.com/joeshaw/envdecode v0.0.0-20200121155833-099f1fc765bd
 	github.com/oklog/run v1.2.0
 	github.com/rs/zerolog v1.35.0
 	github.com/stretchr/testify v1.11.1

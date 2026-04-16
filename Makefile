@@ -25,7 +25,7 @@ vet:
 		golangci-lint run --timeout 5m -v
 
 TAG ?= latest
-REPO ?= ghcr.io/owenthereal/jqplay
+REPO ?= ghcr.io/rprtr258/jqplay
 .PHONY: docker_build
 docker_build:
 	docker buildx build --rm -t $(REPO):$(TAG) --load .
