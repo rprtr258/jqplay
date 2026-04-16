@@ -10,11 +10,11 @@
 
   <title>jq play</title>
 
-  <link rel="icon" type="image/png" href="/images/favicon.png">
-  
+  <link rel="icon" type="image/png" href="./images/favicon.png">
+
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="./css/app.css">
 
   <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!--[if lt IE 9]>
@@ -25,18 +25,45 @@
 
 <body>
   <div class="page-wrap">
-    <div class="row">
-      <div class="col-sm-12 col-md-6">
-        <form name="input" role="form" novalidate>
+    <div class="editors-row">
+      <div class="editor-column">
+        <div class="filter-header">
           <label for="filter">Filter</label>
-          <div id="filter-editor" class="query-editor"></div>
-          <br>
-          <label for="json">JSON</label>
-          <div id="json-editor" class="json-editor"></div>
-        </form>
+          <div class="options-row">
+            <label class="option-label" title="Read each line as string instead of JSON">
+              <input type="checkbox" id="opt-raw-input" data-flag="-R"> Raw input
+            </label>
+            <label class="option-label" title="Read all inputs into an array">
+              <input type="checkbox" id="opt-slurp" data-flag="-s"> Slurp
+            </label>
+          </div>
+        </div>
+        <div id="filter-editor" class="query-editor"></div>
+        <label for="json">JSON</label>
+        <div id="json-editor" class="json-editor"></div>
       </div>
-      <div class="col-sm-12 col-md-6">
-        <label for="result">Result</label>
+      <div class="editor-column">
+        <div class="result-header">
+          <label for="result">Result</label>
+          <div class="options-row">
+            <label class="option-label" title="Compact instead of pretty-printed output">
+              <input type="checkbox" id="opt-compact" data-flag="-c"> Compact
+            </label>
+            <label class="option-label" title="Output without newline after each output">
+              <input type="checkbox" id="opt-join-output" data-flag="-j"> Join output
+            </label>
+            <label class="option-label" title="Sort keys of each object on output">
+              <input type="checkbox" id="opt-sort-keys" data-flag="-S"> Sort keys
+            </label>
+            <label class="option-label" title="Use tabs for indentation">
+              <input type="checkbox" id="opt-tab" data-flag="--tab"> Tabs
+            </label>
+            <label class="option-label indent-option" title="Use n spaces for indentation">
+              Indent:
+              <input type="number" id="opt-indent" min="0" max="7" value="2" class="indent-input">
+            </label>
+          </div>
+        </div>
         <div id="result-editor" class="result-editor"></div>
       </div>
     </div>
@@ -45,13 +72,13 @@
   <!-- jQuery and Bootstrap -->
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js"></script>
-  
+
   <!-- Ace editor -->
   <script src="https://cdn.jsdelivr.net/npm/ace-builds@1.37.1/src-min-noconflict/ace.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/ace-builds@1.37.1/src-min-noconflict/mode-jsoniq.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/ace-builds@1.37.1/src-min-noconflict/theme-github.js"></script>
-  
+  <script src="https://cdn.jsdelivr.net/npm/ace-builds@1.37.1/src-min-noconflict/theme-tomorrow_night.js"></script>
+
   <!-- App -->
-  <script type="module" src="/src/app.js"></script>
+  <script type="module" src="./src/app.js"></script>
 </body>
 </html>

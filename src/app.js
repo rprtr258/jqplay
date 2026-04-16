@@ -10,7 +10,7 @@ let runTimeout = null;
 function initEditors() {
   // Filter editor
   filterEditor = ace.edit('filter-editor');
-  filterEditor.setTheme('ace/theme/github');
+  filterEditor.setTheme('ace/theme/tomorrow_night');
   filterEditor.session.setMode('ace/mode/jsoniq');
   filterEditor.setHighlightActiveLine(false);
   filterEditor.setFontSize(14);
@@ -20,7 +20,7 @@ function initEditors() {
 
   // JSON editor
   jsonEditor = ace.edit('json-editor');
-  jsonEditor.setTheme('ace/theme/github');
+  jsonEditor.setTheme('ace/theme/tomorrow_night');
   jsonEditor.session.setMode('ace/mode/jsoniq');
   jsonEditor.setHighlightActiveLine(false);
   jsonEditor.setFontSize(14);
@@ -29,7 +29,7 @@ function initEditors() {
 
   // Result editor (readonly)
   resultEditor = ace.edit('result-editor');
-  resultEditor.setTheme('ace/theme/github');
+  resultEditor.setTheme('ace/theme/tomorrow_night');
   resultEditor.session.setMode('ace/mode/jsoniq');
   resultEditor.setHighlightActiveLine(false);
   resultEditor.setFontSize(14);
@@ -60,6 +60,11 @@ function initEditors() {
   filterEditor.session.on('change', debounceRun);
   jsonEditor.session.on('change', debounceRun);
 
+  // Add option change listeners
+  document.querySelectorAll('.option-label input').forEach(input => {
+    input.addEventListener('change', debounceRun);
+  });
+
   // Run initial query
   run();
 }
@@ -72,10 +77,32 @@ function debounceRun() {
   runTimeout = setTimeout(run, 300);
 }
 
+// Collect flags from checkboxes
+function getFlags() {
+  const flags = [];
+  
+  document.querySelectorAll('.option-label input[type="checkbox"]:checked').forEach(input => {
+    const flag = input.dataset.flag;
+    if (flag) {
+      flags.push(flag);
+    }
+  });
+  
+  // Handle indent flag (only if tab is not checked)
+  const tabCheckbox = document.getElementById('opt-tab');
+  const indentInput = document.getElementById('opt-indent');
+  if (!tabCheckbox.checked && indentInput.value !== '2') {
+    flags.push('--indent', indentInput.value);
+  }
+  
+  return flags;
+}
+
 // Run jq query
 async function run() {
   const query = filterEditor.getValue();
   const jsonInput = jsonEditor.getValue();
+  const flags = getFlags();
 
   if (!query) {
     resultEditor.setValue('Error: missing filter');
@@ -93,7 +120,7 @@ async function run() {
   resultEditor.clearSelection();
 
   try {
-    const result = await jq.raw(jsonInput, query, []);
+    const result = await jq.raw(jsonInput, query, flags);
 
     if (result.stderr) {
       resultEditor.setValue(result.stderr);
