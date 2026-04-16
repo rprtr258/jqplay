@@ -20,21 +20,51 @@
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
-  <script type="module" crossorigin src="./assets/index-CFeIMGPA.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-D3T6E50Q.css">
+  <script type="module" crossorigin src="./assets/index-wsyM93uD.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-ClI9j8JR.css">
 </head>
 
 <body>
   <div class="page-wrap">
     <div class="editors-row">
       <div class="editor-column">
-        <label for="filter">Filter</label>
+        <div class="filter-header">
+          <label for="filter">Filter</label>
+          <div class="options-row">
+            <label class="option-label" title="Read each line as string instead of JSON">
+              <input type="checkbox" id="opt-raw-input" data-flag="-R"> Raw input
+            </label>
+            <label class="option-label" title="Read all inputs into an array">
+              <input type="checkbox" id="opt-slurp" data-flag="-s"> Slurp
+            </label>
+          </div>
+        </div>
         <div id="filter-editor" class="query-editor"></div>
         <label for="json">JSON</label>
         <div id="json-editor" class="json-editor"></div>
       </div>
       <div class="editor-column">
-        <label for="result">Result</label>
+        <div class="result-header">
+          <label for="result">Result</label>
+          <div class="options-row">
+            <label class="option-label" title="Compact instead of pretty-printed output">
+              <input type="checkbox" id="opt-compact" data-flag="-c"> Compact
+            </label>
+            <label class="option-label" title="Output without newline after each output">
+              <input type="checkbox" id="opt-join-output" data-flag="-j"> Join output
+            </label>
+            <label class="option-label" title="Sort keys of each object on output">
+              <input type="checkbox" id="opt-sort-keys" data-flag="-S"> Sort keys
+            </label>
+            <label class="option-label" title="Use tabs for indentation">
+              <input type="checkbox" id="opt-tab" data-flag="--tab"> Tabs
+            </label>
+            <label class="option-label indent-option" title="Use n spaces for indentation">
+              Indent:
+              <input type="number" id="opt-indent" min="0" max="7" value="2" class="indent-input">
+            </label>
+          </div>
+        </div>
         <div id="result-editor" class="result-editor"></div>
       </div>
     </div>
