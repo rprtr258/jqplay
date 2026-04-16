@@ -24,10 +24,276 @@
 </head>
 
 <body>
-  <div class="page-wrap">
-    <div class="editors-row">
-      <div class="editor-column">
-        <div class="filter-header">
+  <!-- Cheatsheet Modal -->
+  <div class="modal fade" id="cheatsheet-modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" style="flex: 1">jq Cheatsheet</h4>
+          <a href="https://jqlang.github.io/jq/manual/" target="_blank" style="flex: 1">Full manual →</a>
+          <span style="flex-grow: 1">Click on a row to run the example</span>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="flex-grow: 0"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-body-tables">
+            <table class="cheat-table">
+              <tbody>
+                <tr class="cheat-category"><td colspan="4">Basic Filters</td></tr>
+                <tr data-query="." data-json='{"foo":{"bar":{"baz":123}}}'>
+                  <td><code>.</code></td><td>Identity</td>
+                </tr>
+                <tr data-query=".foo" data-json='{"foo":{"bar":{"baz":123}}}'>
+                  <td><code>.foo</code></td><td>Get field</td>
+                </tr>
+                <tr data-query=".foo.bar" data-json='{"foo":{"bar":"baz"}}'>
+                  <td><code>.foo.bar</code></td><td>Nested access</td>
+                </tr>
+                <tr data-query=".[0]" data-json='[1,2,3]'>
+                  <td><code>.[0]</code></td><td>Array index</td>
+                </tr>
+                <tr data-query=".[]" data-json='[1,2,3]'>
+                  <td><code>.[]</code></td><td>Iterate elements</td>
+                </tr>
+                <tr data-query=".[]?" data-json='1'>
+                  <td><code>.[]?</code></td><td>Iterate, suppress errors</td>
+                </tr>
+                <tr data-query=".[2:4]" data-json='["a","b","c","d","e"]'>
+                  <td><code>.[2:4]</code></td><td>Array slice</td>
+                </tr>
+                <tr data-query=".+2 | .*4, .+3" data-json='4'>
+                  <td><code>| ,</code></td><td>Pipe, multiple outputs</td>
+                </tr>
+                <tr data-query=". as $x | $x * 2" data-json='5'>
+                  <td><code>. as $x</code></td><td>Variable binding</td>
+                </tr>
+
+                <tr class="cheat-category"><td colspan="4">Types &amp; Values</td></tr>
+                <tr data-query="[.foo, .bar]" data-json='{"foo":1,"bar":2}'>
+                  <td><code>[...]</code></td><td>Construct array</td>
+                </tr>
+                <tr data-query="{foo, bar}" data-json='{"foo":1,"bar":2}'>
+                  <td><code>{foo, bar}</code></td><td>Construct object</td>
+                </tr>
+                <tr data-query=".. | .a?" data-json='[[{"a":1}]]'>
+                  <td><code>..</code></td><td>Recursive descent</td>
+                </tr>
+                <tr data-query="map(type)[]" data-json='[[], null, 1, "", {}]'>
+                  <td><code>type</code></td><td>Type of value</td>
+                </tr>
+                <tr data-query="null" data-json='1'>
+                  <td><code>null</code></td><td>Null value</td>
+                </tr>
+
+                <tr class="cheat-category"><td colspan="4">Operators</td></tr>
+                <tr data-query=".a + .b" data-json='{"a":[1],"b":[2]}'>
+                  <td><code>+</code></td><td>Add/concat/merge</td>
+                </tr>
+                <tr data-query=".a - .b" data-json='{"a":[1],"b":[2]}'>
+                  <td><code>-</code></td><td>Subtract/array diff</td>
+                </tr>
+                <tr data-query=". * 3" data-json='2'>
+                  <td><code>*</code></td><td>Multiply</td>
+                </tr>
+                <tr data-query=". / 3" data-json='2'>
+                  <td><code>/</code></td><td>Divide/split string</td>
+                </tr>
+                <tr data-query=". % 3" data-json='10'>
+                  <td><code>%</code></td><td>Modulo</td>
+                </tr>
+                <tr data-query=". // 3" data-json='10'>
+                  <td><code>//</code></td><td>Fallback alternative</td>
+                </tr>
+
+                <tr class="cheat-category"><td colspan="4">Conditionals &amp; Logic</td></tr>
+                <tr data-query="if .x then "yes" else "no" end" data-json='{"x":true}'>
+                  <td><code>if-then-else</code></td><td>Conditional</td>
+                </tr>
+                <tr data-query=".a == .b" data-json='{"a":1,"b":1}'>
+                  <td><code>== !=</code></td><td>Equality</td>
+                </tr>
+                <tr data-query=". > 0" data-json='5'>
+                  <td><code>&lt; &lt;= &gt; &gt;=</code></td><td>Comparison</td>
+                </tr>
+                <tr data-query=".a and .b" data-json='{"a":true,"b":false}'>
+                  <td><code>and or not</code></td><td>Boolean logic</td>
+                </tr>
+                <tr data-query="try .x catch 0" data-json='null'>
+                  <td><code>try-catch</code></td><td>Error handling</td>
+                </tr>
+                <tr data-query=".x?" data-json='1'>
+                  <td><code>?</code></td><td>Suppress errors</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <table class="cheat-table">
+              <tbody>
+                <tr class="cheat-category"><td colspan="4">Transformations</td></tr>
+                <tr data-query="map(. * 2)" data-json='[1,2,3]'>
+                  <td><code>map(f)</code></td><td>Transform array</td>
+                </tr>
+                <tr data-query="map_values(. * 2)" data-json='{"a":1,"b":2}'>
+                  <td><code>map_values(f)</code></td><td>Transform object values</td>
+                </tr>
+                <tr data-query="map(select(. > 2))" data-json='[1,5,3,0,7]'>
+                  <td><code>select(cond)</code></td><td>Filter elements</td>
+                </tr>
+                <tr data-query="del(.foo)" data-json='{"foo":1,"bar":2}'>
+                  <td><code>del(.foo)</code></td><td>Delete key/path</td>
+                </tr>
+                <tr data-query="to_entries" data-json='{"a":1,"b":2}'>
+                  <td><code>to_entries</code></td><td>Object to key-value array</td>
+                </tr>
+                <tr data-query="from_entries" data-json='[{"key":"a","value":1},{"key":"b","value":2}]'>
+                  <td><code>from_entries</code></td><td>Key-value array to object</td>
+                </tr>
+                <tr data-query="paths" data-json='[1,[2]]'>
+                  <td><code>paths</code></td><td>All paths in value</td>
+                </tr>
+                <tr data-query="pick(.a, .b)" data-json='{"a":1,"b":2,"c":3}'>
+                  <td><code>pick(.a, .b)</code></td><td>Select paths</td>
+                </tr>
+
+                <tr class="cheat-category"><td colspan="4">Arrays</td></tr>
+                <tr data-query="sort" data-json='[3,1,2]'>
+                  <td><code>sort</code></td><td>Sort ascending</td>
+                </tr>
+                <tr data-query="sort_by(.x)" data-json='[{"x":2},{"x":1},{"x":3}]'>
+                  <td><code>sort_by(.x)</code></td><td>Sort by field</td>
+                </tr>
+                <tr data-query="unique" data-json='[1,2,1,3,2]'>
+                  <td><code>unique</code></td><td>Deduplicate</td>
+                </tr>
+                <tr data-query="group_by(.x)" data-json='[{"x":1},{"x":2},{"x":1}]'>
+                  <td><code>group_by(.x)</code></td><td>Group by field</td>
+                </tr>
+                <tr data-query="reverse" data-json='[1,2,3]'>
+                  <td><code>reverse</code></td><td>Reverse array</td>
+                </tr>
+                <tr data-query="min" data-json='[3,1,2]'>
+                  <td><code>min / max</code></td><td>Min/max element</td>
+                </tr>
+                <tr data-query="first / last" data-json='[1,2,3]'>
+                  <td><code>first / last</code></td><td>First/last element</td>
+                </tr>
+                <tr data-query="nth(1)" data-json='[1,2,3]'>
+                  <td><code>nth(n)</code></td><td>Nth element</td>
+                </tr>
+                <tr data-query="contains([2])" data-json='[1,2,3]'>
+                  <td><code>contains(x)</code></td><td>Contains element</td>
+                </tr>
+                <tr data-query="indices(2)" data-json='[1,2,3,2,4]'>
+                  <td><code>indices(x)</code></td><td>All indices of x</td>
+                </tr>
+
+                <tr class="cheat-category"><td colspan="4">Strings</td></tr>
+                <tr data-query="split(", ")" data-json='"a, b, c"'>
+                  <td><code>split(sep)</code></td><td>Split string</td>
+                </tr>
+                <tr data-query="join(", ")" data-json='["a","b","c"]'>
+                  <td><code>join(", ")</code></td><td>Join array to string</td>
+                </tr>
+                <tr data-query="ascii_downcase" data-json='"HELLO"'>
+                  <td><code>ascii_downcase</code></td><td>Lowercase ASCII</td>
+                </tr>
+                <tr data-query="ascii_upcase" data-json='"hello"'>
+                  <td><code>ascii_upcase</code></td><td>Uppercase ASCII</td>
+                </tr>
+                <tr data-query="ltrimstr("foo")" data-json='"foobar"'>
+                  <td><code>ltrimstr</code></td><td>Trim prefix</td>
+                </tr>
+                <tr data-query="rtrimstr("bar")" data-json='"foobar"'>
+                  <td><code>rtrimstr</code></td><td>Trim suffix</td>
+                </tr>
+                <tr data-query="startswith("foo")" data-json='"foobar"'>
+                  <td><code>startswith</code></td><td>Has prefix</td>
+                </tr>
+                <tr data-query="endswith("bar")" data-json='"foobar"'>
+                  <td><code>endswith</code></td><td>Has suffix</td>
+                </tr>
+                <tr data-query=""\(.foo)"" data-json='{"foo":"bar"}'>
+                  <td><code>"\(exp)"</code></td><td>String interpolation</td>
+                </tr>
+                <tr data-query="test("^a")" data-json='"abc"'>
+                  <td><code>test("^a")</code></td><td>Regex match</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <table class="cheat-table">
+              <tbody>
+                <tr class="cheat-category"><td colspan="4">Functions</td></tr>
+                <tr data-query="length" data-json='[1,2,3]'>
+                  <td><code>length</code></td><td>Length/size</td>
+                </tr>
+                <tr data-query="keys" data-json='[1,2,3]'>
+                  <td><code>keys</code></td><td>Object keys as array</td>
+                </tr>
+                <tr data-query="has("foo")" data-json='{"foo":1}'>
+                  <td><code>has(key)</code></td><td>Key/index exists</td>
+                </tr>
+                <tr data-query="." data-json='{"foo":1}'>
+                  <td><code>in(obj)</code></td><td>Key in object</td>
+                </tr>
+                <tr data-query="add" data-json='[1,2,3]'>
+                  <td><code>add</code></td><td>Sum/concat all</td>
+                </tr>
+                <tr data-query="any" data-json='[true, false, true]'>
+                  <td><code>any / all</code></td><td>Any/all true</td>
+                </tr>
+                <tr data-query="flatten" data-json='[1,[2],[[3]]]'>
+                  <td><code>flatten</code></td><td>Flatten nested arrays</td>
+                </tr>
+                <tr data-query="range(3)" data-json='null'>
+                  <td><code>range(3)</code></td><td>Numeric range</td>
+                </tr>
+
+                <tr class="cheat-category"><td colspan="4">Advanced</td></tr>
+                <tr data-query="reduce .[] as $x (1; .*$x)" data-json='[1,2,3,4,5]'>
+                  <td><code>reduce .[] as $x (0; .+$x)</code></td><td>Fold/reduce</td>
+                </tr>
+                <tr data-query="recurse(.[]?)" data-json='[[1],2]'>
+                  <td><code>recurse(f)</code></td><td>Recursive apply</td>
+                </tr>
+                <tr data-query="walk(if type == "number" then . * 2 else . end)" data-json='[1,[2,3]]'>
+                  <td><code>walk(f)</code></td><td>Recursive transform</td>
+                </tr>
+                <tr data-query="while(. < 10; . * 2)" data-json='1'>
+                  <td><code>while(cond; f)</code></td><td>Loop while true</td>
+                </tr>
+                <tr data-query="until(. >= 10; . * 2)" data-json='1'>
+                  <td><code>until(cond; f)</code></td><td>Loop until true</td>
+                </tr>
+                <tr data-query="$ENV.HOME" data-json='null'>
+                  <td><code>$ENV</code></td><td>Environment vars</td>
+                </tr>
+                <tr data-query="now" data-json='null'>
+                  <td><code>now</code></td><td>Unix timestamp</td>
+                </tr>
+                <tr data-query="tojson" data-json='{"a":1}'>
+                  <td><code>tojson</code></td><td>To JSON string</td>
+                </tr>
+                <tr data-query="fromjson" data-json='"{\"a\":1}"'>
+                  <td><code>fromjson</code></td><td>Parse JSON string</td>
+                </tr>
+                <tr data-query="@base64" data-json='"hello"'>
+                  <td><code>@base64</code></td><td>Base64 encode</td>
+                </tr>
+                <tr data-query="@uri" data-json='"a b c"'>
+                  <td><code>@uri</code></td><td>URI encode</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="editors-row">
+    <div class="editor-column">
+      <div class="filter-header">
+        <span class="filter-header-pre">
           <label for="filter">Filter</label>
           <div class="options-row">
             <label class="option-label" title="Read each line as string instead of JSON">
@@ -37,13 +303,15 @@
               <input type="checkbox" id="opt-slurp" data-flag="-s"> Slurp
             </label>
           </div>
-        </div>
-        <div id="filter-editor" class="query-editor"></div>
-        <label for="json">JSON</label>
-        <div id="json-editor" class="json-editor"></div>
+        </span>
       </div>
-      <div class="editor-column">
-        <div class="result-header">
+      <div id="filter-editor" class="query-editor"></div>
+      <label for="json">JSON</label>
+      <div id="json-editor" class="json-editor"></div>
+    </div>
+    <div class="editor-column">
+      <div class="filter-header">
+        <span class="filter-header-pre">
           <label for="result">Result</label>
           <div class="options-row">
             <label class="option-label" title="Compact instead of pretty-printed output">
@@ -63,9 +331,23 @@
               <input type="number" id="opt-indent" min="0" max="7" value="2" class="indent-input">
             </label>
           </div>
+        </span>
+        <div class="header-right">
+          <button type="button" class="header-icon-btn" id="cheatsheet-btn" title="Cheatsheet">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </button>
+          <a href="https://github.com/rprtr258/jqplay" target="_blank" class="github-link" title="GitHub">
+            <svg height="22" viewBox="0 0 16 16" width="22" fill="currentColor">
+              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+            </svg>
+          </a>
         </div>
-        <div id="result-editor" class="result-editor"></div>
       </div>
+      <div id="result-editor" class="result-editor"></div>
     </div>
   </div>
 

@@ -80,21 +80,21 @@ function debounceRun() {
 // Collect flags from checkboxes
 function getFlags() {
   const flags = [];
-  
+
   document.querySelectorAll('.option-label input[type="checkbox"]:checked').forEach(input => {
     const flag = input.dataset.flag;
     if (flag) {
       flags.push(flag);
     }
   });
-  
+
   // Handle indent flag (only if tab is not checked)
   const tabCheckbox = document.getElementById('opt-tab');
   const indentInput = document.getElementById('opt-indent');
   if (!tabCheckbox.checked && indentInput.value !== '2') {
     flags.push('--indent', indentInput.value);
   }
-  
+
   return flags;
 }
 
@@ -136,3 +136,32 @@ async function run() {
 
 // Initialize on DOM ready
 document.addEventListener('DOMContentLoaded', initEditors);
+
+// Cheatsheet modal
+window.applyCheatsheetExample = (query, json) => {
+  filterEditor.setValue(query);
+  jsonEditor.setValue(json);
+  filterEditor.clearSelection();
+  jsonEditor.clearSelection();
+  $('#cheatsheet-modal').modal('hide');
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  const cheatsheetBtn = document.getElementById('cheatsheet-btn');
+  if (cheatsheetBtn) {
+    cheatsheetBtn.addEventListener('click', () => {
+      $('#cheatsheet-modal').modal('show');
+    });
+  }
+
+  // Handle cheatsheet row clicks
+  document.querySelectorAll('.cheat-table tbody tr').forEach(row => {
+    row.addEventListener('click', () => {
+      const query = row.dataset.query;
+      const json = row.dataset.json;
+      if (query && json) {
+        window.applyCheatsheetExample(query, json);
+      }
+    });
+  });
+});

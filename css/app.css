@@ -15,17 +15,54 @@ code {
 /* ___ Base styles ___ */
 html, body {
   height: 100%;
-  margin: 0;
   padding: 0;
   background: #1e1e1e;
   color: #fff;
   overflow: hidden;
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+  margin: 0px;
+}
+
+/* ___ Header styles ___ */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-icon-btn {
+  background: none;
+  border: none;
+  padding: 2px;
+  cursor: pointer;
+  color: #aaa;
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+}
+
+.header-icon-btn:hover {
+  color: #fff;
+  background: #333;
+}
+
+.github-link {
+  color: #aaa;
+  display: flex;
+  align-items: center;
+}
+
+.github-link:hover {
+  color: #fff;
 }
 
 /* ___ Header styles ___ */
 
 header {
-  margin: 0 -1.5em 1.5em;
   overflow: hidden;
   padding: 0.7em 1.5em;
 }
@@ -50,12 +87,6 @@ header a {
 /* ___ Body styles ___ */
 
 /* Full-screen layout */
-.page-wrap {
-  height: 100vh;
-  padding: 10px;
-  box-sizing: border-box;
-}
-
 .editors-row {
   display: flex;
   height: 100%;
@@ -71,7 +102,7 @@ header a {
 
 .editor-column label {
   flex-shrink: 0;
-  margin: 0 0 5px 0;
+  padding: 5px 7px;
 }
 
 .main {
@@ -98,7 +129,6 @@ header a {
   flex: 1;
   width: 100%;
   min-height: 0;
-  margin-top: 5px;
 }
 
 .result-editor {
@@ -125,13 +155,15 @@ header a {
 }
 
 /* Options row */
-.filter-header,
-.result-header {
+.filter-header-pre {
+  display: flex;
+}
+
+.filter-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-shrink: 0;
-  margin-bottom: 5px;
 }
 
 .filter-header label,
@@ -306,6 +338,108 @@ a:hover {
 label {
   font-size: 16px;
   font-weight: 600;
+  margin: 0;
+}
+
+/* Cheatsheet modal */
+.cheat-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  height: fit-content;
+}
+
+.cheat-table th {
+  text-align: left;
+  font-weight: 600;
+  color: #6db3f2;
+  padding: 6px 8px;
+  border-bottom: 1px solid #444;
+  font-size: 12px;
+}
+
+.cheat-table td {
+  padding: 0px 2px;
+  border-bottom: 1px solid #333;
+  vertical-align: top;
+}
+
+.cheat-table tr:not(.cheat-category) {
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.cheat-table tr:not(.cheat-category):hover {
+  background: #3a3a3a;
+}
+
+.cheat-table code {
+  background: #3a3a3a;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 12px;
+  color: #e6e6e6;
+}
+
+.cheat-table tr:not(.cheat-category):hover code {
+  background: #444;
+}
+
+.cheat-category td {
+  color: #6db3f2;
+  font-weight: 600;
+  padding: 6px 8px;
+  border-bottom: 1px solid #555;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Modal dark theme */
+.modal-dialog {
+  width: 65%;
+}
+
+.modal-content {
+  background-color: #2a2a2a;
+  border: 1px solid #444;
+}
+
+.modal-header {
+  background-color: #333;
+  border-bottom: 1px solid #444;
+  color: #fff;
+  padding: 10px 15px;
+  display: flex;
+  width: 100%;
+}
+
+.modal-header::before {
+  content: none;
+}
+.modal-header::after {
+  content: none;
+}
+
+.modal-body {
+  background-color: #2a2a2a;
+  color: #ddd;
+  padding: 15px;
+}
+
+.modal-body-tables {
+  display: flex;
+  gap: 10px;
+}
+
+.modal-header .close {
+  color: #fff;
+  text-shadow: none;
+  opacity: 0.6;
+}
+
+.modal-header .close:hover {
+  opacity: 1;
 }
 
 /* ___ Debugging Utilities ___ */
