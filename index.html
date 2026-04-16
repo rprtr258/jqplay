@@ -20,8 +20,8 @@
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
-  <script type="module" crossorigin src="./assets/index-Dbo3LgEH.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-DKgQfn-O.css">
+  <script type="module" crossorigin src="./assets/index-D45fe02h.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-CU-gg_uy.css">
 </head>
 
 <body>
@@ -64,6 +64,9 @@
                 <tr data-query=".+2 | .*4, .+3" data-json='4'>
                   <td><code>| ,</code></td><td>Pipe, multiple outputs</td>
                 </tr>
+                <tr data-query=". as $x | $x * 2" data-json='5'>
+                  <td><code>. as $x</code></td><td>Variable binding</td>
+                </tr>
 
                 <tr class="cheat-category"><td colspan="4">Types &amp; Values</td></tr>
                 <tr data-query="[.foo, .bar]" data-json='{"foo":1,"bar":2}'>
@@ -102,30 +105,24 @@
                   <td><code>//</code></td><td>Fallback alternative</td>
                 </tr>
 
-                <tr class="cheat-category"><td colspan="4">Functions</td></tr>
-                <tr data-query="length" data-json='[1,2,3]'>
-                  <td><code>length</code></td><td>Length/size</td>
+                <tr class="cheat-category"><td colspan="4">Conditionals &amp; Logic</td></tr>
+                <tr data-query="if .x then "yes" else "no" end" data-json='{"x":true}'>
+                  <td><code>if-then-else</code></td><td>Conditional</td>
                 </tr>
-                <tr data-query="keys" data-json='[1,2,3]'>
-                  <td><code>keys</code></td><td>Object keys as array</td>
+                <tr data-query=".a == .b" data-json='{"a":1,"b":1}'>
+                  <td><code>== !=</code></td><td>Equality</td>
                 </tr>
-                <tr data-query="has("foo")" data-json='{"foo":1}'>
-                  <td><code>has(key)</code></td><td>Key/index exists</td>
+                <tr data-query=". > 0" data-json='5'>
+                  <td><code>&lt; &lt;= &gt; &gt;=</code></td><td>Comparison</td>
                 </tr>
-                <tr data-query="." data-json='{"foo":1}'>
-                  <td><code>in(obj)</code></td><td>Key in object</td>
+                <tr data-query=".a and .b" data-json='{"a":true,"b":false}'>
+                  <td><code>and or not</code></td><td>Boolean logic</td>
                 </tr>
-                <tr data-query="add" data-json='[1,2,3]'>
-                  <td><code>add</code></td><td>Sum/concat all</td>
+                <tr data-query="try .x catch 0" data-json='null'>
+                  <td><code>try-catch</code></td><td>Error handling</td>
                 </tr>
-                <tr data-query="any" data-json='[true, false, true]'>
-                  <td><code>any / all</code></td><td>Any/all true</td>
-                </tr>
-                <tr data-query="flatten" data-json='[1,[2],[[3]]]'>
-                  <td><code>flatten</code></td><td>Flatten nested arrays</td>
-                </tr>
-                <tr data-query="range(3)" data-json='null'>
-                  <td><code>range(3)</code></td><td>Numeric range</td>
+                <tr data-query=".x?" data-json='1'>
+                  <td><code>?</code></td><td>Suppress errors</td>
                 </tr>
               </tbody>
             </table>
@@ -226,30 +223,33 @@
 
             <table class="cheat-table">
               <tbody>
-                <tr class="cheat-category"><td colspan="4">Conditionals &amp; Logic</td></tr>
-                <tr data-query="if .x then "yes" else "no" end" data-json='{"x":true}'>
-                  <td><code>if-then-else</code></td><td>Conditional</td>
+                <tr class="cheat-category"><td colspan="4">Functions</td></tr>
+                <tr data-query="length" data-json='[1,2,3]'>
+                  <td><code>length</code></td><td>Length/size</td>
                 </tr>
-                <tr data-query=".a == .b" data-json='{"a":1,"b":1}'>
-                  <td><code>== !=</code></td><td>Equality</td>
+                <tr data-query="keys" data-json='[1,2,3]'>
+                  <td><code>keys</code></td><td>Object keys as array</td>
                 </tr>
-                <tr data-query=". > 0" data-json='5'>
-                  <td><code>&lt; &lt;= &gt; &gt;=</code></td><td>Comparison</td>
+                <tr data-query="has("foo")" data-json='{"foo":1}'>
+                  <td><code>has(key)</code></td><td>Key/index exists</td>
                 </tr>
-                <tr data-query=".a and .b" data-json='{"a":true,"b":false}'>
-                  <td><code>and or not</code></td><td>Boolean logic</td>
+                <tr data-query="." data-json='{"foo":1}'>
+                  <td><code>in(obj)</code></td><td>Key in object</td>
                 </tr>
-                <tr data-query="try .x catch 0" data-json='null'>
-                  <td><code>try-catch</code></td><td>Error handling</td>
+                <tr data-query="add" data-json='[1,2,3]'>
+                  <td><code>add</code></td><td>Sum/concat all</td>
                 </tr>
-                <tr data-query=".x?" data-json='1'>
-                  <td><code>?</code></td><td>Suppress errors</td>
+                <tr data-query="any" data-json='[true, false, true]'>
+                  <td><code>any / all</code></td><td>Any/all true</td>
+                </tr>
+                <tr data-query="flatten" data-json='[1,[2],[[3]]]'>
+                  <td><code>flatten</code></td><td>Flatten nested arrays</td>
+                </tr>
+                <tr data-query="range(3)" data-json='null'>
+                  <td><code>range(3)</code></td><td>Numeric range</td>
                 </tr>
 
                 <tr class="cheat-category"><td colspan="4">Advanced</td></tr>
-                <tr data-query=". as $x | $x * 2" data-json='5'>
-                  <td><code>. as $x |</code></td><td>Variable binding</td>
-                </tr>
                 <tr data-query="reduce .[] as $x (1; .*$x)" data-json='[1,2,3,4,5]'>
                   <td><code>reduce .[] as $x (0; .+$x)</code></td><td>Fold/reduce</td>
                 </tr>
