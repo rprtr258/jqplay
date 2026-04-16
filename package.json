@@ -1,34 +1,28 @@
 {
   "name": "jqplay",
-  "version": "1.0.0",
-  "description": "jqplay",
+  "version": "2.0.0",
+  "description": "jqplay - A playground for jq running entirely in the browser",
   "repository": {
     "type": "git",
     "url": "https://github.com/rprtr258/jqplay"
   },
-  "author": "Owen Ou",
+  "author": "rprtr258",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/rprtr258/jqplay/issues"
   },
   "homepage": "https://jqplay.org",
-  "dependencies": {
-    "ace-builds": "^1.37.1",
-    "angular": "^1.8.3",
-    "angular-ui-ace": "^0.2.3",
-    "bootstrap": "^3.4.1",
-    "jquery": "^3.7.1",
-    "grunt": "^1.0.4",
-    "grunt-cli": "^1.5.0",
-    "grunt-contrib-clean": "^2.0.1",
-    "grunt-contrib-concat": "^2.1.0",
-    "grunt-contrib-copy": "^1.0.0",
-    "grunt-contrib-cssmin": "^5.0.0",
-    "grunt-contrib-uglify": "^5.2.2",
-    "grunt-contrib-watch": "^1.1.0",
-    "grunt-text-replace": "^0.4.0"
-  },
+  "type": "module",
   "scripts": {
-    "postinstall": "grunt build"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "packageManager": "bun@1.2.10",
+  "dependencies": {
+    "jq-wasm": "^1.1.0-jq-1.8.1"
+  },
+  "devDependencies": {
+    "vite": "^6.2.0"
   }
 }
