@@ -122,7 +122,21 @@ header a {
   border: 1px solid #444;
   flex-shrink: 0;
   height: 80px;
+  min-height: 40px;
   width: 100%;
+}
+
+.resize-handle {
+  height: 6px;
+  cursor: row-resize;
+  flex-shrink: 0;
+  background: transparent;
+  transition: background 0.15s;
+}
+
+.resize-handle:hover,
+.resize-handle.active {
+  background: #6db3f2;
 }
 
 .json-editor {

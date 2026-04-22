@@ -137,6 +137,43 @@ async function run() {
 // Initialize on DOM ready
 document.addEventListener('DOMContentLoaded', initEditors);
 
+// Resize handle functionality
+document.addEventListener('DOMContentLoaded', () => {
+  const handle = document.getElementById('filter-resize-handle');
+  const filterEditorEl = document.getElementById('filter-editor');
+  let isResizing = false;
+  let startY = 0;
+  let startHeight = 0;
+
+  handle.addEventListener('mousedown', (e) => {
+    isResizing = true;
+    startY = e.clientY;
+    startHeight = filterEditorEl.offsetHeight;
+    handle.classList.add('active');
+    document.body.style.cursor = 'row-resize';
+    document.body.style.userSelect = 'none';
+    e.preventDefault();
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (!isResizing) return;
+    const deltaY = e.clientY - startY;
+    const newHeight = Math.max(40, startHeight + deltaY);
+    filterEditorEl.style.height = newHeight + 'px';
+    // Trigger Ace editor resize
+    filterEditor.resize();
+  });
+
+  document.addEventListener('mouseup', () => {
+    if (isResizing) {
+      isResizing = false;
+      handle.classList.remove('active');
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    }
+  });
+});
+
 // Cheatsheet modal
 window.applyCheatsheetExample = (query, json) => {
   filterEditor.setValue(query);
