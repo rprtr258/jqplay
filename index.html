@@ -105,7 +105,7 @@
                 </tr>
 
                 <tr class="cheat-category"><td colspan="4">Conditionals &amp; Logic</td></tr>
-                <tr data-query="if .x then "yes" else "no" end" data-json='{"x":true}'>
+                <tr data-query='if .x then "yes" else "no" end' data-json='{"x":true}'>
                   <td><code>if-then-else</code></td><td>Conditional</td>
                 </tr>
                 <tr data-query=".a == .b" data-json='{"a":1,"b":1}'>
@@ -187,10 +187,10 @@
                 </tr>
 
                 <tr class="cheat-category"><td colspan="4">Strings</td></tr>
-                <tr data-query="split(", ")" data-json='"a, b, c"'>
+                <tr data-query='split(", ")' data-json='"a, b, c"'>
                   <td><code>split(sep)</code></td><td>Split string</td>
                 </tr>
-                <tr data-query="join(", ")" data-json='["a","b","c"]'>
+                <tr data-query='join(", ")' data-json='["a","b","c"]'>
                   <td><code>join(", ")</code></td><td>Join array to string</td>
                 </tr>
                 <tr data-query="ascii_downcase" data-json='"HELLO"'>
@@ -199,22 +199,22 @@
                 <tr data-query="ascii_upcase" data-json='"hello"'>
                   <td><code>ascii_upcase</code></td><td>Uppercase ASCII</td>
                 </tr>
-                <tr data-query="ltrimstr("foo")" data-json='"foobar"'>
+                <tr data-query='ltrimstr("foo")' data-json='"foobar"'>
                   <td><code>ltrimstr</code></td><td>Trim prefix</td>
                 </tr>
-                <tr data-query="rtrimstr("bar")" data-json='"foobar"'>
+                <tr data-query='rtrimstr("bar")' data-json='"foobar"'>
                   <td><code>rtrimstr</code></td><td>Trim suffix</td>
                 </tr>
-                <tr data-query="startswith("foo")" data-json='"foobar"'>
+                <tr data-query='startswith("foo")' data-json='"foobar"'>
                   <td><code>startswith</code></td><td>Has prefix</td>
                 </tr>
-                <tr data-query="endswith("bar")" data-json='"foobar"'>
+                <tr data-query='endswith("bar")' data-json='"foobar"'>
                   <td><code>endswith</code></td><td>Has suffix</td>
                 </tr>
-                <tr data-query=""\(.foo)"" data-json='{"foo":"bar"}'>
+                <tr data-query='"\(.foo)"' data-json='{"foo":"bar"}'>
                   <td><code>"\(exp)"</code></td><td>String interpolation</td>
                 </tr>
-                <tr data-query="test("^a")" data-json='"abc"'>
+                <tr data-query='test("^a")' data-json='"abc"'>
                   <td><code>test("^a")</code></td><td>Regex match</td>
                 </tr>
               </tbody>
@@ -229,7 +229,7 @@
                 <tr data-query="keys" data-json='[1,2,3]'>
                   <td><code>keys</code></td><td>Object keys as array</td>
                 </tr>
-                <tr data-query="has("foo")" data-json='{"foo":1}'>
+                <tr data-query='has("foo")' data-json='{"foo":1}'>
                   <td><code>has(key)</code></td><td>Key/index exists</td>
                 </tr>
                 <tr data-query="." data-json='{"foo":1}'>
@@ -255,7 +255,7 @@
                 <tr data-query="recurse(.[]?)" data-json='[[1],2]'>
                   <td><code>recurse(f)</code></td><td>Recursive apply</td>
                 </tr>
-                <tr data-query="walk(if type == "number" then . * 2 else . end)" data-json='[1,[2,3]]'>
+                <tr data-query='walk(if type == "number" then . * 2 else . end)' data-json='[1,[2,3]]'>
                   <td><code>walk(f)</code></td><td>Recursive transform</td>
                 </tr>
                 <tr data-query="while(. < 10; . * 2)" data-json='1'>
