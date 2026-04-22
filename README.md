@@ -1,7 +1,5 @@
 # jqplay
 
-[![OpenCollective](https://opencollective.com/jqplay/backers/badge.svg)](#backers) [![OpenCollective](https://opfcfollective.com/jqplay/sponsors/badge.svg)](#sponsors)
-
 [jqplay](https://jqplay.org) is a playground for [jq](https://github.com/jqlang/jq). Please put it into good use.
 
 This version runs entirely in the browser using [jq-wasm](https://github.com/owenthereal/jq-wasm) - no backend required!
