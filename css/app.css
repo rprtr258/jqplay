@@ -29,6 +29,7 @@ html, body {
 
 /* ___ Header styles ___ */
 .header-right {
+  padding: 0 8px;
   display: flex;
   align-items: center;
   gap: 8px;
