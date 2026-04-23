@@ -6,8 +6,90 @@ let filterEditor, jsonEditor, resultEditor;
 // Debounce timer
 let runTimeout = null;
 
+// Compress and base64 encode a string
+async function compressAndEncode(str) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(str);
+  const compressedStream = new Response(
+    new Response(data).body.pipeThrough(new CompressionStream('gzip'))
+  );
+  const compressed = new Uint8Array(await compressedStream.arrayBuffer());
+  // Convert to base64
+  let binary = '';
+  for (let i = 0; i < compressed.length; i++) {
+    binary += String.fromCharCode(compressed[i]);
+  }
+  return btoa(binary);
+}
+
+// Decode base64 and decompress a string
+async function decodeAndDecompress(base64) {
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  const decompressedStream = new Response(
+    new Response(bytes).body.pipeThrough(new DecompressionStream('gzip'))
+  );
+  const decompressed = await decompressedStream.arrayBuffer();
+  return new TextDecoder().decode(decompressed);
+}
+
+// Copy link to clipboard
+async function copyLink() {
+  const query = filterEditor.getValue();
+  const json = jsonEditor.getValue();
+
+  try {
+    const [encodedQuery, encodedJson] = await Promise.all([
+      compressAndEncode(query),
+      compressAndEncode(json)
+    ]);
+
+    const url = new URL(window.location.href);
+    url.search = '';
+    url.searchParams.set('q', encodedQuery);
+    url.searchParams.set('j', encodedJson);
+
+    await navigator.clipboard.writeText(url.toString());
+
+    // Visual feedback
+    const btn = document.getElementById('copy-link-btn');
+    const originalColor = btn.style.color;
+    btn.style.color = '#6db3f2';
+    setTimeout(() => btn.style.color = originalColor, 500);
+  } catch (err) {
+    console.error('Failed to copy link:', err);
+  }
+}
+
+// Load from URL parameters if present
+async function loadFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const q = params.get('q');
+  const j = params.get('j');
+
+  if (q && j) {
+    try {
+      const [query, json] = await Promise.all([
+        decodeAndDecompress(q),
+        decodeAndDecompress(j)
+      ]);
+      filterEditor.setValue(query);
+      jsonEditor.setValue(json);
+      filterEditor.clearSelection();
+      jsonEditor.clearSelection();
+      return true;
+    } catch (err) {
+      console.error('Failed to load from URL:', err);
+    }
+  }
+  return false;
+}
+
 // Initialize editors
-function initEditors() {
+async function initEditors() {
   // Filter editor
   filterEditor = ace.edit('filter-editor');
   filterEditor.setTheme('ace/theme/tomorrow_night');
@@ -38,17 +120,21 @@ function initEditors() {
   resultEditor.setReadOnly(true);
 
   // Set initial content
-  filterEditor.setValue('. | with_entries({key: .key, value: .value.name})');
-  jsonEditor.setValue(JSON.stringify({
-    person1: {
-      name: "Alice",
-      welcome: "Hello Alice!"
-    },
-    person2: {
-      name: "Bob",
-      welcome: "Hello Bob!"
-    }
-  }, null, 2));
+  const loadedFromUrl = await loadFromUrl();
+
+  if (!loadedFromUrl) {
+    filterEditor.setValue('. | with_entries({key: .key, value: .value.name})');
+    jsonEditor.setValue(JSON.stringify({
+      person1: {
+        name: "Alice",
+        welcome: "Hello Alice!"
+      },
+      person2: {
+        name: "Bob",
+        welcome: "Hello Bob!"
+      }
+    }, null, 2));
+  }
   resultEditor.setValue('');
 
   // Clear selection
@@ -136,6 +222,14 @@ async function run() {
 
 // Initialize on DOM ready
 document.addEventListener('DOMContentLoaded', initEditors);
+
+// Copy link button
+document.addEventListener('DOMContentLoaded', () => {
+  const copyLinkBtn = document.getElementById('copy-link-btn');
+  if (copyLinkBtn) {
+    copyLinkBtn.addEventListener('click', copyLink);
+  }
+});
 
 // Resize handle functionality
 document.addEventListener('DOMContentLoaded', () => {
