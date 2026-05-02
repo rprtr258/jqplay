@@ -40,17 +40,20 @@ async function decodeAndDecompress(base64) {
 async function copyLink() {
   const query = filterEditor.getValue();
   const json = jsonEditor.getValue();
+  const flags = getFlags();
 
   try {
-    const [encodedQuery, encodedJson] = await Promise.all([
+    const [encodedQuery, encodedJson, encodedFlags] = await Promise.all([
       compressAndEncode(query),
-      compressAndEncode(json)
+      compressAndEncode(json),
+      compressAndEncode(JSON.stringify(flags))
     ]);
 
     const url = new URL(window.location.href);
     url.search = '';
     url.searchParams.set('q', encodedQuery);
     url.searchParams.set('j', encodedJson);
+    url.searchParams.set('f', encodedFlags);
 
     await navigator.clipboard.writeText(url.toString());
 
@@ -69,17 +72,29 @@ async function loadFromUrl() {
   const params = new URLSearchParams(window.location.search);
   const q = params.get('q');
   const j = params.get('j');
+  const f = params.get('f');
 
   if (q && j) {
     try {
-      const [query, json] = await Promise.all([
+      const [query, json, flagsStr] = await Promise.all([
         decodeAndDecompress(q),
-        decodeAndDecompress(j)
+        decodeAndDecompress(j),
+        f ? decodeAndDecompress(f) : null
       ]);
       filterEditor.setValue(query);
       jsonEditor.setValue(json);
       filterEditor.clearSelection();
       jsonEditor.clearSelection();
+
+      if (flagsStr) {
+        try {
+          const flags = JSON.parse(flagsStr);
+          setFlags(flags);
+        } catch (e) {
+          console.error('Failed to parse flags from URL:', e);
+        }
+      }
+
       return true;
     } catch (err) {
       console.error('Failed to load from URL:', err);
@@ -182,6 +197,30 @@ function getFlags() {
   }
 
   return flags;
+}
+
+// Apply flags array to checkboxes and inputs
+function setFlags(flags) {
+  // Uncheck all first
+  document.querySelectorAll('.option-label input[type="checkbox"]').forEach(input => {
+    input.checked = false;
+  });
+  // Reset indent to default
+  const indentInput = document.getElementById('opt-indent');
+  indentInput.value = '2';
+
+  for (let i = 0; i < flags.length; i++) {
+    const flag = flags[i];
+    const checkbox = document.querySelector(`input[data-flag="${flag}"]`);
+    if (checkbox) {
+      checkbox.checked = true;
+    } else if (flag === '--indent') {
+      i++;
+      if (i < flags.length) {
+        indentInput.value = flags[i];
+      }
+    }
+  }
 }
 
 // Run jq query
