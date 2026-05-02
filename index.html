@@ -232,7 +232,7 @@
                 <tr data-query='has("foo")' data-json='{"foo":1}'>
                   <td><code>has(key)</code></td><td>Key/index exists</td>
                 </tr>
-                <tr data-query="." data-json='{"foo":1}'>
+                <tr data-query='in({"foo":1})' data-json='"foo"'>
                   <td><code>in(obj)</code></td><td>Key in object</td>
                 </tr>
                 <tr data-query="add" data-json='[1,2,3]'>
@@ -250,7 +250,7 @@
 
                 <tr class="cheat-category"><td colspan="4">Advanced</td></tr>
                 <tr data-query="reduce .[] as $x (1; .*$x)" data-json='[1,2,3,4,5]'>
-                  <td><code>reduce .[] as $x (0; .+$x)</code></td><td>Fold/reduce</td>
+                  <td><code>reduce .[] as $x (1; .*$x)</code></td><td>Fold/reduce</td>
                 </tr>
                 <tr data-query="recurse(.[]?)" data-json='[[1],2]'>
                   <td><code>recurse(f)</code></td><td>Recursive apply</td>
